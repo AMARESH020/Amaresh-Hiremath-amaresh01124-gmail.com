@@ -1,0 +1,19 @@
+node_modules/
+
+# SQLite state: every local, seeded and probe database. One rule covers app.db,
+# bench.db, e2e.db, check-api.db, secprobe*.db and any future harness DB, so a
+# new probe cannot leak into a commit just because nobody added its name here.
+# The sidecar -wal/-shm files match the pattern too, since * does not match '/'.
+*.db
+*.db-wal
+*.db-shm
+
+dist/
+test-results/
+playwright-report/
+
+# Local run and harness output. Debugging leftovers, not source.
+*.log
+*.err
+pw-*.json
+pw-*.txt

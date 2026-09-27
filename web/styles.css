@@ -1,0 +1,163 @@
+/* Themes are driven by the data-org-theme attribute, which is also the contract the
+   UI test reads. A human can tell which org they are in at a glance; the test asserts
+   the rendered colour actually changed. */
+[data-org-theme='cobalt'] { --accent: #1d4ed8; --surface: #e7edff; --tint: #c7d6ff; }
+[data-org-theme='amber']  { --accent: #b45309; --surface: #fdf0dd; --tint: #f6d9a8; }
+[data-org-theme='moss']   { --accent: #15803d; --surface: #e6f4ea; --tint: #bfe3ca; }
+[data-org-theme='plum']   { --accent: #7e22ce; --surface: #f3e8ff; --tint: #ddc3f7; }
+[data-org-theme='rust']   { --accent: #b91c1c; --surface: #fdeaea; --tint: #f5c2c2; }
+[data-org-theme='teal']   { --accent: #0f766e; --surface: #e3f4f2; --tint: #b3ddd8; }
+
+:root {
+  --ink: #16181d;
+  --muted: #5b6270;
+  --line: #d7dbe3;
+  --card: #ffffff;
+  --ok: #157347;
+  --bad: #b02a37;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; color: var(--ink); background: #f6f7f9; }
+
+/* The app shell carries the org identity. Its background IS the visual-difference
+   requirement, and it is what the UI test measures with getComputedStyle. */
+.app-shell {
+  background: var(--surface, #f6f7f9);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 120ms linear;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--accent, #374151);
+  color: #fff;
+}
+.topbar h1 { font-size: 16px; margin: 0; letter-spacing: .3px; }
+.topbar .who { margin-left: auto; font-size: 13px; opacity: .92; }
+
+.org-switcher { display: flex; gap: 6px; align-items: center; }
+.org-option {
+  border: 1px solid rgba(255,255,255,.45);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.org-option[aria-pressed='true'] { background: #fff; color: var(--accent); font-weight: 600; }
+.org-dialog { width: min(420px, calc(100vw - 32px)); padding: 22px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--card); }
+.org-dialog::backdrop { background: rgba(22,24,29,.48); }
+.org-dialog h2 { margin: 0 0 12px; font-size: 18px; }
+.org-dialog form > label { margin-top: 0; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.dialog-actions button { width: auto; margin: 0; padding: 8px 12px; }
+button.secondary { border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); cursor: pointer; }
+.policy-menu { position: relative; font-size: 12px; }
+.policy-menu summary { cursor: pointer; border: 1px solid rgba(255,255,255,.55); border-radius: 6px; padding: 6px 9px; list-style: none; }
+.policy-menu summary::-webkit-details-marker { display: none; }
+.policy-menu[open] { z-index: 2; }
+.policy-menu[open] .policy-inspector { position: absolute; top: calc(100% + 8px); right: 0; width: min(680px, calc(100vw - 24px)); max-height: min(75vh, 620px); overflow: auto; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--ink); box-shadow: 0 8px 28px rgba(22,24,29,.18); }
+
+.layout { display: flex; flex: 1; align-items: flex-start; }
+
+.nav { width: 210px; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+.nav button {
+  display: flex; align-items: center; gap: 8px;
+  text-align: left; width: 100%;
+  border: 1px solid transparent; background: transparent;
+  padding: 8px 10px; border-radius: 7px;
+  font-size: 14px; color: var(--ink); cursor: pointer;
+}
+.nav button:hover { background: var(--tint, #eef0f4); }
+.nav button[aria-current='true'] { background: var(--tint, #eef0f4); font-weight: 600; }
+.nav button[data-state='locked'] { color: #8b909b; cursor: not-allowed; }
+
+.main { flex: 1; padding: 18px 22px 60px; min-width: 0; }
+.main h2 { margin: 0 0 4px; font-size: 18px; }
+.main .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+
+table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+th, td { text-align: left; padding: 9px 12px; font-size: 13.5px; border-bottom: 1px solid var(--line); }
+th { background: #fafbfc; font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+tr:last-child td { border-bottom: none; }
+
+.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+button.act {
+  border: 1px solid var(--line); background: #fff; border-radius: 6px;
+  padding: 4px 9px; font-size: 12.5px; cursor: pointer; color: var(--ink);
+}
+button.act[data-state='unlocked'] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+button.act[data-state='locked'] { color: #9aa0aa; background: #f4f5f7; cursor: not-allowed; }
+
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line); background: #f7f8fa; color: var(--muted); }
+.pill.allow { color: var(--ok); border-color: #b6dfc6; background: #eefaf2; }
+.pill.deny { color: var(--bad); border-color: #f2c2c7; background: #fdf1f2; }
+.pill.online { color: var(--ok); border-color: #b6dfc6; background: #eefaf2; }
+.pill.offline { color: var(--muted); }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 16px; max-width: 380px; }
+.card h3 { margin: 0 0 12px; font-size: 15px; }
+label { display: block; font-size: 12.5px; color: var(--muted); margin: 10px 0 4px; }
+input, select { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; font-family: inherit; }
+button.primary { margin-top: 14px; width: 100%; padding: 9px; border: none; border-radius: 7px; background: var(--accent, #1d4ed8); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+button.primary:disabled { opacity: .6; cursor: default; }
+
+.error { color: var(--bad); font-size: 13px; margin-top: 10px; }
+/* A failure the user has to be able to read, not just a line of red text. Used by the
+   sign-in screen; side panels keep the plainer .error line. */
+.alert {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e3b3b8;
+  border-left: 3px solid var(--bad);
+  background: #fdf3f4;
+  border-radius: 6px;
+  color: #7a1d26;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.alert strong { color: var(--bad); }
+.hint { color: var(--muted); font-size: 12.5px; margin-top: 14px; line-height: 1.5; }
+.hint code { background: #eef0f4; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.policy-inspector { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
+.policy-heading h3 { margin: 0; font-size: 15px; }
+.policy-heading p, .policy-note { margin: 5px 0 12px; color: var(--muted); font-size: 12.5px; }
+.policy-controls { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr); gap: 12px; max-width: 680px; margin: 12px 0 16px; }
+.policy-controls label { margin-top: 0; }
+.policy-table-wrap { overflow-x: auto; }
+.policy-table-wrap table { min-width: 600px; }
+.policy-table-wrap caption { padding: 10px 12px; text-align: left; color: var(--muted); font-size: 12px; }
+.policy-dialog { width: min(900px, calc(100vw - 32px)); max-height: min(82vh, 760px); padding: 20px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--card); }
+.policy-dialog::backdrop { background: rgba(22,24,29,.48); }
+.policy-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.policy-dialog-header h2 { margin: 0; font-size: 18px; }
+.policy-dialog-header p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+.policy-dialog-header button { width: auto; flex: 0 0 auto; }
+.policy-dialog .policy-table-wrap { max-height: 60vh; overflow: auto; }
+.policy-explicit-deny { background: #fff0f1; }
+.policy-implicit-deny { background: #f3f4f6; }
+.policy-open { padding: 4px 9px; font-size: 12.5px; }
+@media (max-width: 640px) {
+  .policy-controls { grid-template-columns: 1fr; }
+  .policy-dialog { padding: 14px; }
+  .policy-dialog-header { align-items: center; }
+}
+.center { display: grid; place-items: center; min-height: 100vh; }
+.banner { border: 1px solid var(--line); background: #fffdf3; border-radius: 8px; padding: 10px 13px; font-size: 13px; margin-bottom: 14px; }
+.toast { position: fixed; top: 72px; right: 22px; z-index: 4; width: min(360px, calc(100vw - 32px)); padding: 14px 16px; border: 1px solid #b6dfc6; border-left: 4px solid var(--ok); border-radius: 8px; background: #f6fff8; box-shadow: 0 8px 24px rgba(22,24,29,.16); font-size: 13px; }
+.toast-title { display: flex; gap: 7px; align-items: center; color: var(--ok); font-weight: 700; margin-bottom: 7px; }
+.toast-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.toast-link, .toast-dismiss { border: 0; background: transparent; padding: 0; font: inherit; cursor: pointer; }
+.toast-link { color: var(--accent); font-weight: 600; text-align: left; }
+.toast-dismiss { color: var(--muted); }
+.toast-error { border-color: #f0c0c0; border-left-color: var(--bad); background: #fff6f6; }
+.toast-error .toast-title { color: var(--bad); }
